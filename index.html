@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piggy Expense & Co-Payment Tracker</title>
+    <title>Piggy Tracker</title>
     <style>
         :root {
             --primary: #e91e63;
@@ -336,8 +336,8 @@
 <body>
 
     <header>
-        <h1>🐷 Piggy Expense & Co-Payment Tracker</h1>
-        <p>Track feeds, purchases, May & Net co-payments, and remaining balances</p>
+        <h1>🐷</h1>
+        <p>Track feeds, purchases, co-payments, and remaining balances</p>
     </header>
 
     <section class="summary-cards">
@@ -372,7 +372,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Date / Item</th>
+                    <th>Date</th>
                     <th>Weight</th>
                     <th>Total Cost</th>
                     <th>Initial Paid</th>
@@ -555,7 +555,7 @@
                     entries = defaultData;
                     await saveData();
                 }
-                document.getElementById('sync-indicator').textContent = '✅ Cloud Database Synced Live';
+                document.getElementById('sync-indicator').textContent = '@sparksfly';
             } catch (err) {
                 console.error("Cloud fetch failed, using local storage:", err);
                 const saved = localStorage.getItem('piggy_expenses_may_net_v2');
