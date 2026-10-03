@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piggy Tracker - Payment History</title>
+    <style>
+        :root {
+            --primary: #e91e63;
+            --secondary: #9c27b0;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --text-muted: #6c757d;
+            --border: #dee2e6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 12px; max-width: 950px; margin: 0 auto; padding-bottom: 60px; }
+
+        header {
+            text-align: center;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        nav { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+        nav a { text-decoration: none; padding: 8px 16px; background: white; border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.85rem; font-weight: 600; }
+        nav a.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .table-container { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+        th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+        th { background-color: #f1f3f5; font-weight: 600; color: #495057; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🐷</h1>
+        <p>Complete Payment Audit Trail</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Dashboard</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="history.html" class="active">Payment History</a>
+    </nav>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date Logged</th>
+                    <th>Batch</th>
+                    <th>Payer / Description</th>
+                    <th>Amount Paid</th>
+                </tr>
+            </thead>
+            <tbody id="history-body">
+                <!-- Injected via JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const BIN_ID = '6ac0f750ac6210605a0f6dc7';
+        const MASTER_KEY = '$2a$10$/vUxXQ4YKri1zEHfQhXqCuoSM5ME5s/2bF.lxQr7kpWrlhq8I4Pme';
+
+        async function loadHistory() {
+            let entries = [];
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': MASTER_KEY } });
+                const data = await res.json();
+                entries = data.record || [];
+            } catch {
+                const saved = localStorage.getItem('piggy_expenses_may_net_v2');
+                entries = saved ? JSON.parse(saved) : [];
+            }
+
+            const tbody = document.getElementById('history-body');
+            tbody.innerHTML = '';
+
+            entries.forEach(item => {
+                if (item.history) {
+                    item.history.forEach(h => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${h.date}</td>
+                            <td><strong>${item.dateStr}</strong></td>
+                            <td>${h.person}</td>
+                            <td style="color: var(--primary-dark); font-weight: 700;">₱${(h.amount || 0).toLocaleString()}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            });
+        }
+
+        window.onload = loadHistory;
+    </script>
+</body>
+</html>
